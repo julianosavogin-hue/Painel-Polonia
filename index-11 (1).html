@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tropa da Polônia | Central de Comando</title>
+<style>
+:root{--bg:#090909;--panel:#141414;--panel2:#1b1b1b;--line:#292929;--red:#c51f2b;--red2:#ef3945;--white:#f1f1f1;--muted:#929292;--green:#45b879}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font:14px Inter,system-ui,Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;display:grid;grid-template-columns:245px 1fr}
+.sidebar{background:#101010;border-right:1px solid var(--line);padding:22px 15px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;align-items:center;gap:11px;padding:4px 8px 23px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.emblem{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#a81420,#3b090d);display:grid;place-items:center;font-size:22px;font-weight:900}
+.brand strong{display:block;font-size:13px;letter-spacing:1px}.brand small{color:var(--muted);font-size:10px;letter-spacing:1.3px}
+.nav-label{font-size:10px;color:#666;letter-spacing:1.4px;padding:14px 10px 7px}
+.nav button{display:flex;align-items:center;gap:11px;width:100%;border:0;background:transparent;color:#aaa;text-align:left;padding:11px 12px;border-radius:8px;margin:2px 0}
+.nav button:hover,.nav button.active{background:#281012;color:#fff}.nav button.active{box-shadow:inset 3px 0 var(--red2)}
+.nav .ico{width:18px;text-align:center;color:var(--red2)}
+.sidebar-foot{position:absolute;bottom:18px;left:22px;right:22px;color:#666;font-size:11px}
+main{min-width:0;padding:25px 30px 50px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:12px}
+.breadcrumb{color:var(--muted);font-size:12px}.user{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);padding:8px 12px;border-radius:10px}
+.avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#3b1014;color:#ff8790;font-weight:700}
+h1{font-size:25px;margin:0 0 7px} .sub{color:var(--muted);margin:0 0 23px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:17px}
+.stat-label{color:var(--muted);font-size:12px}.stat{font-size:27px;font-weight:750;margin:10px 0 3px}.stat-note{font-size:11px;color:#777}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:27px 0 13px}
+.section-head h2{font-size:16px;margin:0}.btn{border:0;border-radius:8px;background:var(--red);color:white;padding:10px 14px;font-weight:650}.btn:hover{background:var(--red2)}
+.btn.secondary{background:#242424;border:1px solid #363636;color:#ddd}.btn.small{padding:7px 10px;font-size:12px}
+.two{display:grid;grid-template-columns:1.3fr 1fr;gap:14px}
+.list{display:flex;flex-direction:column;gap:0}.list-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #262626;gap:10px}.list-row:last-child{border:0}
+.muted{color:var(--muted)}.pill{font-size:10px;padding:5px 8px;border-radius:99px;background:#292929;color:#bbb}.pill.red{background:#3a1115;color:#ff9ba2}.pill.green{background:#102d20;color:#7de0a9}
+.team-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.team{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}.team h3{margin:0 0 7px;font-size:14px}.team p{color:var(--muted);font-size:12px;line-height:1.5;margin:0 0 12px}
+.table-wrap{overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;min-width:620px}th,td{text-align:left;padding:13px 15px;border-bottom:1px solid #292929;font-size:12px}th{color:#888;font-weight:600;background:#181818}td{color:#ddd}tr:last-child td{border:0}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px}.toolbar input,.field input,.field select,.field textarea,.toolbar select{background:#101010;border:1px solid #333;color:#eee;border-radius:8px;padding:10px;outline:none}.toolbar input{min-width:220px}
+.page{display:none}.page.active{display:block}
+.empty{padding:28px;text-align:center;color:#777}
+.modal-back{display:none;position:fixed;inset:0;background:#000b;z-index:5;align-items:center;justify-content:center;padding:18px}.modal-back.show{display:flex}.modal{width:min(480px,100%);background:#151515;border:1px solid #383838;border-radius:15px;padding:20px}.modal h2{margin:0 0 16px;font-size:18px}.field{display:flex;flex-direction:column;gap:6px;margin:12px 0}.field label{font-size:12px;color:#aaa}.field input,.field select,.field textarea{width:100%}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.notice{border:1px solid #492126;background:#211013;border-radius:10px;padding:13px;color:#d9bfc1;font-size:12px;line-height:1.5;margin-top:18px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{height:auto;position:relative;padding:12px}.brand{padding-bottom:12px;margin-bottom:8px}.nav{display:flex;overflow:auto;gap:5px}.nav-label,.sidebar-foot{display:none}.nav button{white-space:nowrap;width:auto}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:18px}.two{grid-template-columns:1fr}}
+@media(max-width:560px){.team-grid{grid-template-columns:1fr}.topbar{align-items:flex-start}.user span{display:none}h1{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+ <div class="brand"><div class="emblem">P</div><div><strong>TROPA DA POLÔNIA</strong><small>CENTRAL DE COMANDO</small></div></div>
+ <div class="nav">
+  <div class="nav-label">PRINCIPAL</div>
+  <button class="active" data-page="dashboard"><span class="ico">▦</span> Visão geral</button>
+  <button data-page="members"><span class="ico">♟</span> Membros</button>
+  <button data-page="passports"><span class="ico">▤</span> Passaportes</button>
+  <button data-page="teams"><span class="ico">◇</span> Equipes e setores</button>
+  <button data-page="goals"><span class="ico">◎</span> Metas diárias</button>
+  <button data-page="tasks"><span class="ico">☑</span> Tarefas da gestão</button>
+  <button data-page="requests"><span class="ico">⇄</span> Solicitações</button>
+  <button data-page="shifts"><span class="ico">◷</span> Escalas</button>
+  <div class="nav-label">GESTÃO</div>
+  <button data-page="recruit"><span class="ico">＋</span> Recrutamento</button>
+  <button data-page="attendance"><span class="ico">◷</span> Presença e atividades</button>
+  <button data-page="events"><span class="ico">▦</span> Agenda e reuniões</button>
+  <button data-page="stock"><span class="ico">▣</span> Estoque RP</button>
+  <button data-page="finance"><span class="ico">＄</span> Financeiro RP</button>
+  <button data-page="discipline"><span class="ico">⚑</span> Advertências</button>
+  <button data-page="evaluations"><span class="ico">★</span> Avaliações</button>
+  <button data-page="documents"><span class="ico">▤</span> Documentos e regras</button>
+  <button data-page="announcements"><span class="ico">▱</span> Comunicados</button>
+  <button data-page="reports"><span class="ico">▥</span> Relatórios</button>
+  <button data-page="audit"><span class="ico">◷</span> Histórico do sistema</button>
+  <div class="nav-label">SISTEMA</div>
+  <button data-page="settings"><span class="ico">⚙</span> Configurações</button>
+ </div>
+ <div class="sidebar-foot">Ambiente independente • FiveM RP</div>
+</aside>
+<main>
+ <div class="topbar"><div class="breadcrumb">Tropa da Polônia / <span id="crumb">Visão geral</span></div><div class="user"><div class="avatar">D</div><span><b>DONO</b><br><small class="muted">Administrador principal · demonstração</small></span></div></div>
+
+ <section class="page active" id="dashboard">
+  <h1>Central de comando</h1><p class="sub">Visão geral da organização e das atividades registradas.</p>
+  <div class="grid">
+   <div class="card"><div class="stat-label">MEMBROS CADASTRADOS</div><div class="stat" id="memberCount">0</div><div class="stat-note">Cadastros neste navegador</div></div>
+   <div class="card"><div class="stat-label">METAS REGISTRADAS HOJE</div><div class="stat" id="goalCount">0</div><div class="stat-note">Lançamentos diários</div></div>
+   <div class="card"><div class="stat-label">CANDIDATOS</div><div class="stat" id="candidateCount">0</div><div class="stat-note">Em análise</div></div>
+   <div class="card"><div class="stat-label">EQUIPES</div><div class="stat">5</div><div class="stat-note">Setores configurados</div></div>
+   <div class="card"><div class="stat-label">TAREFAS PENDENTES</div><div class="stat" id="pendingTaskCount">0</div><div class="stat-note">Demandas da liderança</div></div>
+   <div class="card"><div class="stat-label">PRÓXIMOS EVENTOS</div><div class="stat" id="upcomingEventCount">0</div><div class="stat-note">Agenda da organização</div></div>
+   <div class="card"><div class="stat-label">SOLICITAÇÕES ABERTAS</div><div class="stat" id="openRequestCount">0</div><div class="stat-note">Aguardando análise</div></div>
+   <div class="card"><div class="stat-label">AVALIAÇÕES REGISTRADAS</div><div class="stat" id="evaluationCount">0</div><div class="stat-note">Acompanhamento da equipe</div></div>
+  </div>
+  <div class="section-head"><h2>Setores da organização</h2><button class="btn secondary small" data-goto="teams">Ver equipes</button></div>
+  <div class="team-grid">
+   <div class="team"><h3>Equipe Estufa</h3><p>Setor de atividades de cultivo fictícias no cenário RP.</p><span class="pill red">Setor configurado</span></div>
+   <div class="team"><h3>Equipe Meta</h3><p>Controle de objetivos e recursos fictícios do RP.</p><span class="pill red">Setor configurado</span></div>
+   <div class="team"><h3>Gerência</h3><p>Gestão de registros de comércio fictício e resultados RP.</p><span class="pill red">Setor configurado</span></div>
+   <div class="team"><h3>Equipe Elite</h3><p>Controle administrativo do orçamento fictício da facção.</p><span class="pill red">Setor configurado</span></div>
+   <div class="team"><h3>Linhas de Frente</h3><p>Organização de membros, presença e atividades de RP.</p><span class="pill red">Setor configurado</span></div>
+  </div>
+  <div class="two">
+   <div><div class="section-head"><h2>Últimos membros</h2><button class="btn small" data-goto="members">Cadastrar membro</button></div><div class="card list" id="recentMembers"><div class="empty">Nenhum membro cadastrado ainda.</div></div></div>
+   <div><div class="section-head"><h2>Atalhos</h2></div><div class="card list">
+    <div class="list-row"><span>Adicionar membro</span><button class="btn secondary small" data-action="member">Abrir</button></div>
+    <div class="list-row"><span>Lançar meta diária</span><button class="btn secondary small" data-action="goal">Abrir</button></div>
+    <div class="list-row"><span>Registrar candidato</span><button class="btn secondary small" data-action="candidate">Abrir</button></div>
+    <div class="list-row"><span>Criar tarefa da gestão</span><button class="btn secondary small" data-action="task">Abrir</button></div>
+    <div class="list-row"><span>Agendar reunião ou evento</span><button class="btn secondary small" data-action="event">Abrir</button></div>
+    <div class="list-row"><span>Registrar solicitação</span><button class="btn secondary small" data-action="request">Abrir</button></div>
+    <div class="list-row"><span>Registrar avaliação</span><button class="btn secondary small" data-action="evaluation">Abrir</button></div>
+   </div></div>
+  </div>
+  <div class="notice"><b>Importante:</b> esta é a primeira versão visual e demonstrativa. Os registros ficam salvos somente neste navegador. Para todos os membros acessarem a mesma conta e os mesmos dados, será necessário conectar autenticação e banco de dados online.</div>
+ </section>
+
+ <section class="page" id="members"><h1>Membros</h1><p class="sub">Cadastro, situação, cargo e participação nos setores.</p><div class="toolbar"><input id="memberSearch" placeholder="Buscar por nome ou passaporte..."><button class="btn" data-action="member">+ Novo membro</button></div><div class="table-wrap"><table><thead><tr><th>PASSAPORTE</th><th>NOME / NICK</th><th>CARGO</th><th>EQUIPES</th><th>SITUAÇÃO</th><th>AÇÕES</th></tr></thead><tbody id="membersTable"></tbody></table></div></section>
+ <section class="page" id="passports"><h1>Passaportes</h1><p class="sub">Identificação interna dos integrantes da organização RP.</p><div class="toolbar"><input id="passportSearch" placeholder="Buscar passaporte ou membro..."><button class="btn" data-action="member">+ Emitir passaporte</button></div><div class="table-wrap"><table><thead><tr><th>NÚMERO</th><th>MEMBRO</th><th>CARGO</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="passportsTable"></tbody></table></div></section>
+ <section class="page" id="teams"><h1>Equipes e setores</h1><p class="sub">Um integrante pode participar de várias equipes ou ficar sem setor.</p><div class="team-grid" id="teamCards"></div><div class="notice">Atribuições de cada setor são organizacionais e fictícias, próprias do cenário de interpretação (RP).</div></section>
+ <section class="page" id="goals"><h1>Metas diárias</h1><p class="sub">Registre objetivos e resultados diários dos membros.</p><div class="toolbar"><button class="btn" data-action="goal">+ Lançar meta</button></div><div class="table-wrap"><table><thead><tr><th>DATA</th><th>MEMBRO</th><th>OBJETIVO / ATIVIDADE RP</th><th>RESULTADO</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="goalsTable"></tbody></table></div></section>
+ <section class="page" id="tasks"><h1>Tarefas da gestão</h1><p class="sub">Distribua demandas, acompanhe prazos e controle o andamento.</p><div class="toolbar"><select id="taskFilter"><option value="">Todas as tarefas</option><option>Pendente</option><option>Em andamento</option><option>Concluída</option></select><button class="btn" data-action="task">+ Nova tarefa</button></div><div class="table-wrap"><table><thead><tr><th>TAREFA</th><th>RESPONSÁVEL</th><th>PRIORIDADE</th><th>PRAZO</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="tasksTable"></tbody></table></div></section>
+ <section class="page" id="requests"><h1>Solicitações internas</h1><p class="sub">Controle pedidos de mudança de equipe, afastamento, promoção e suporte.</p><div class="toolbar"><select id="requestFilter"><option value="">Todas as solicitações</option><option>Aberta</option><option>Em análise</option><option>Aprovada</option><option>Reprovada</option></select><button class="btn" data-action="request">+ Nova solicitação</button></div><div class="table-wrap"><table><thead><tr><th>DATA</th><th>MEMBRO</th><th>TIPO</th><th>DESCRIÇÃO</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="requestsTable"></tbody></table></div></section>
+ <section class="page" id="recruit"><h1>Recrutamento</h1><p class="sub">Acompanhe candidatos e decisões da liderança.</p><div class="toolbar"><button class="btn" data-action="candidate">+ Novo candidato</button></div><div class="table-wrap"><table><thead><tr><th>CANDIDATO</th><th>CONTATO / NICK</th><th>DATA</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="recruitTable"></tbody></table></div></section>
+ <section class="page" id="attendance"><h1>Presença e atividades</h1><p class="sub">Registre presença em reuniões, treinos e atividades do cenário RP.</p><div class="toolbar"><button class="btn" data-action="attendance">+ Registrar presença</button></div><div class="table-wrap"><table><thead><tr><th>DATA</th><th>MEMBRO</th><th>ATIVIDADE</th><th>STATUS</th><th>OBSERVAÇÃO</th><th>AÇÕES</th></tr></thead><tbody id="attendanceTable"></tbody></table></div></section>
+ <section class="page" id="events"><h1>Agenda e reuniões</h1><p class="sub">Organize reuniões, eventos, treinamentos e compromissos da organização.</p><div class="toolbar"><button class="btn" data-action="event">+ Agendar compromisso</button></div><div class="table-wrap"><table><thead><tr><th>DATA</th><th>HORÁRIO</th><th>EVENTO</th><th>LOCAL</th><th>RESPONSÁVEL</th><th>AÇÕES</th></tr></thead><tbody id="eventsTable"></tbody></table></div></section>
+ <section class="page" id="shifts"><h1>Escalas e plantões</h1><p class="sub">Organize turnos, responsáveis e horários de cobertura.</p><div class="toolbar"><button class="btn" data-action="shift">+ Criar escala</button></div><div class="table-wrap"><table><thead><tr><th>DATA</th><th>MEMBRO</th><th>INÍCIO</th><th>FIM</th><th>SETOR</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="shiftsTable"></tbody></table></div></section>
+ <section class="page" id="stock"><h1>Estoque RP</h1><p class="sub">Inventário abstrato de itens fictícios do cenário e seus saldos.</p><div class="card" style="margin-bottom:14px"><b>Saldo atual por item</b><div id="stockBalances" class="list" style="margin-top:8px"><div class="empty">Nenhuma movimentação registrada.</div></div></div><div class="toolbar"><button class="btn" data-action="stock">+ Lançar movimentação</button></div><div class="table-wrap"><table><thead><tr><th>DATA</th><th>ITEM RP</th><th>MOVIMENTAÇÃO</th><th>QUANTIDADE</th><th>RESPONSÁVEL</th><th>OBSERVAÇÃO</th><th>AÇÕES</th></tr></thead><tbody id="stockTable"></tbody></table></div></section>
+ <section class="page" id="finance"><h1>Financeiro RP</h1><p class="sub">Livro-caixa fictício para receitas, despesas e orçamento interno do roleplay.</p><div class="grid"><div class="card"><div class="stat-label">ENTRADAS RP</div><div class="stat" id="incomeTotal">R$ 0</div></div><div class="card"><div class="stat-label">SAÍDAS RP</div><div class="stat" id="expenseTotal">R$ 0</div></div><div class="card"><div class="stat-label">SALDO RP</div><div class="stat" id="balanceTotal">R$ 0</div></div></div><div class="toolbar" style="margin-top:16px"><button class="btn" data-action="finance">+ Novo lançamento</button></div><div class="table-wrap"><table><thead><tr><th>DATA</th><th>TIPO</th><th>CATEGORIA</th><th>VALOR RP</th><th>RESPONSÁVEL</th><th>DESCRIÇÃO</th><th>AÇÕES</th></tr></thead><tbody id="financeTable"></tbody></table></div></section>
+ <section class="page" id="discipline"><h1>Advertências</h1><p class="sub">Registro administrativo de ocorrências e medidas internas.</p><div class="toolbar"><button class="btn" data-action="discipline">+ Registrar advertência</button></div><div class="table-wrap"><table><thead><tr><th>DATA</th><th>MEMBRO</th><th>TIPO</th><th>MOTIVO</th><th>RESPONSÁVEL</th><th>AÇÕES</th></tr></thead><tbody id="disciplineTable"></tbody></table></div></section>
+ <section class="page" id="evaluations"><h1>Avaliações de membros</h1><p class="sub">Registre feedback, desempenho e pontos de melhoria.</p><div class="toolbar"><button class="btn" data-action="evaluation">+ Nova avaliação</button></div><div class="table-wrap"><table><thead><tr><th>DATA</th><th>MEMBRO</th><th>AVALIADOR</th><th>NOTA</th><th>DESEMPENHO</th><th>OBSERVAÇÕES</th><th>AÇÕES</th></tr></thead><tbody id="evaluationsTable"></tbody></table></div></section>
+ <section class="page" id="documents"><h1>Documentos e regras</h1><p class="sub">Centralize normas internas, procedimentos e referências da organização.</p><div class="toolbar"><button class="btn" data-action="document">+ Adicionar documento</button></div><div id="documentList" class="list card"></div></section>
+ <section class="page" id="announcements"><h1>Comunicados</h1><p class="sub">Avisos oficiais para os integrantes.</p><div class="toolbar"><button class="btn" data-action="announcement">+ Publicar comunicado</button></div><div id="announcementList" class="list card"></div></section>
+ <section class="page" id="audit"><h1>Histórico do sistema</h1><p class="sub">Acompanhe os registros criados, editados e excluídos no painel.</p><div class="toolbar"><input id="auditSearch" placeholder="Buscar no histórico..."><button class="btn secondary" id="auditExport">Baixar histórico CSV</button></div><div class="table-wrap"><table><thead><tr><th>DATA</th><th>AÇÃO</th><th>DETALHE</th></tr></thead><tbody id="auditTable"></tbody></table></div></section>
+ <section class="page" id="reports"><h1>Relatórios</h1><p class="sub">Resumo automático dos registros salvos neste navegador.</p><div class="grid"><div class="card"><div class="stat-label">MEMBROS ATIVOS</div><div class="stat" id="activeReport">0</div></div><div class="card"><div class="stat-label">METAS CONCLUÍDAS</div><div class="stat" id="doneReport">0</div></div><div class="card"><div class="stat-label">PRESENÇAS</div><div class="stat" id="attendanceReport">0</div></div><div class="card"><div class="stat-label">CANDIDATOS APROVADOS</div><div class="stat" id="approvedReport">0</div></div></div><div class="card" style="margin-top:14px"><h2 style="font-size:15px">Desempenho por equipe</h2><div id="teamReport" class="list"></div></div><div class="toolbar" style="margin-top:14px"><button class="btn secondary" id="reportExport">Baixar relatório CSV</button></div></section>
+ <section class="page" id="settings"><h1>Configurações</h1><p class="sub">Preferências e administração do painel.</p><div class="card"><b>Conta demonstrativa</b><p class="muted">DONO · Administrador principal</p><p class="muted">O painel ainda não tem login online. Os dados ficam neste navegador até a conexão com autenticação e banco compartilhado.</p><div class="toolbar"><button class="btn secondary" id="exportBtn">Exportar backup JSON</button><label class="btn secondary" for="importFile">Importar backup JSON</label><input id="importFile" type="file" accept="application/json" hidden></div><button class="btn secondary" id="clearData">Apagar dados locais</button></div></section>
+</main></div>
+
+<div class="modal-back" id="modalBack"><div class="modal"><h2 id="modalTitle">Novo cadastro</h2><form id="modalForm"></form></div></div>
+
+<script>
+const teams=['Equipe Estufa','Equipe Meta','Gerência','Equipe Elite','Linhas de Frente'];
+const keys=['members','goals','candidates','attendance','stock','finance','discipline','announcements','audit','tasks','events','requests','shifts','evaluations','documents'];
+const load=k=>{try{return JSON.parse(localStorage.getItem('polonia_'+k)||'[]')}catch(e){return[]}};
+const save=k=>localStorage.setItem('polonia_'+k,JSON.stringify(db[k]));
+const db=Object.fromEntries(keys.map(k=>[k,load(k)]));
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toLocaleDateString('pt-BR');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'R$ '+Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+function log(action,detail){db.audit.unshift({date:today(),action,detail});save('audit')}
+function page(id){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id));$('crumb').textContent=document.querySelector(`[data-page="${id}"]`)?.textContent.trim()||id;render()}
+document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>page(b.dataset.page)));
+document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>page(b.dataset.goto)));
+document.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(b)openModal(b.dataset.action)});
+function memberOptions(){return db.members.map(m=>`<option>${esc(m.name)}</option>`).join('')}
+function field(label,name,type='text',opts='',required=false,placeholder=''){return `<div class="field"><label>${label}</label>${type==='select'?`<select name="${name}" ${required?'required':''}>${opts}</select>`:`<input name="${name}" type="${type}" ${required?'required':''} placeholder="${placeholder}">`}</div>`}
+function openModal(type){
+ let title='',fields='';
+ if(type==='member'){title='Cadastrar membro';fields=field('Nome / nick','name','text','',true,'Ex.: Player01')+field('Número do passaporte','passport','text','',false,'Automático se vazio')+field('Contato / Instagram','contact')+field('Cargo','role','select',['Membro','Linha de frente','Gerente','Sublíder','Líder','DONO'].map(x=>`<option>${x}</option>`).join(''),true)+`<div class="field"><label>Equipes (pode selecionar várias)</label><select name="teams" multiple size="5">${teams.map(t=>`<option>${t}</option>`).join('')}</select><small class="muted">Deixe vazio se não tiver equipe.</small></div>`+field('Situação','status','select','<option>Ativo</option><option>Inativo</option><option>Em avaliação</option>')}
+ if(type==='goal'){title='Meta diária';fields=field('Membro','member','select',memberOptions(),true)+field('Objetivo / atividade RP','task','text','',true)+field('Resultado','result')+field('Status','status','select','<option>Em andamento</option><option>Concluída</option><option>Não concluída</option>')}
+ if(type==='candidate'){title='Novo candidato';fields=field('Nome / nick','name','text','',true)+field('Contato / identificação RP','contact')+field('Observações','notes')+field('Status','status','select','<option>Em análise</option><option>Aprovado</option><option>Reprovado</option>')}
+ if(type==='attendance'){title='Registrar presença';fields=field('Membro','member','select',memberOptions(),true)+field('Atividade','activity','text','',true,'Reunião, treino ou evento RP')+field('Status','status','select','<option>Presente</option><option>Ausente</option><option>Justificado</option>')+field('Observação','notes')}
+ if(type==='stock'){title='Movimentação de inventário RP';fields=field('Item fictício','item','text','',true)+field('Movimentação','movement','select','<option>Entrada</option><option>Saída</option><option>Ajuste</option>')+field('Quantidade','quantity','number','',true)+field('Responsável','responsible','select',memberOptions())+field('Observação','notes')}
+ if(type==='finance'){title='Lançamento financeiro RP';fields=field('Tipo','kind','select','<option>Entrada</option><option>Saída</option>')+field('Categoria','category','text','',true)+field('Valor fictício','amount','number','',true)+field('Responsável','responsible','select',memberOptions())+field('Descrição','description')}
+ if(type==='discipline'){title='Registrar advertência';fields=field('Membro','member','select',memberOptions(),true)+field('Tipo','kind','select','<option>Orientação</option><option>Advertência verbal</option><option>Advertência formal</option><option>Suspensão RP</option>')+field('Motivo','reason','text','',true)+field('Responsável','responsible')}
+ if(type==='task'){title='Nova tarefa da gestão';fields=field('Título da tarefa','title','text','',true,'Ex.: Organizar reunião')+field('Responsável','responsible','select',memberOptions())+field('Prioridade','priority','select','<option>Baixa</option><option selected>Média</option><option>Alta</option><option>Urgente</option>')+field('Prazo','dueDate','date','',true)+field('Status','status','select','<option>Pendente</option><option>Em andamento</option><option>Concluída</option>')+field('Descrição','description')}
+ if(type==='event'){title='Agendar compromisso';fields=field('Nome do evento','title','text','',true)+field('Data','eventDate','date','',true)+field('Horário','time','time')+field('Local','location')+field('Responsável','responsible','select',memberOptions())+field('Observações','notes')}
+ if(type==='request'){title='Nova solicitação interna';fields=field('Membro solicitante','member','select',memberOptions(),true)+field('Tipo de solicitação','kind','select','<option>Promoção</option><option>Mudança de equipe</option><option>Afastamento</option><option>Retorno</option><option>Suporte</option><option>Outro</option>')+field('Descrição / justificativa','description','text','',true)+field('Status','status','select','<option>Aberta</option><option>Em análise</option><option>Aprovada</option><option>Reprovada</option>')+field('Responsável pela análise','reviewer')}
+ if(type==='shift'){title='Criar escala';fields=field('Membro','member','select',memberOptions(),true)+field('Data','shiftDate','date','',true)+field('Horário de início','start','time','',true)+field('Horário de término','end','time','',true)+field('Setor','sector','select',teams.map(t=>`<option>${t}</option>`).join(''))+field('Status','status','select','<option>Agendado</option><option>Concluído</option><option>Falta</option><option>Justificado</option>')}
+ if(type==='evaluation'){title='Avaliação de membro';fields=field('Membro','member','select',memberOptions(),true)+field('Avaliador','reviewer','text','',true)+field('Nota (0 a 10)','score','number','',true)+field('Desempenho','performance','select','<option>Excelente</option><option>Bom</option><option>Regular</option><option>Precisa melhorar</option>')+field('Observações','notes')}
+ if(type==='document'){title='Adicionar documento ou regra';fields=field('Título','title','text','',true)+field('Categoria','category','select','<option>Regra</option><option>Procedimento</option><option>Treinamento</option><option>Referência</option>')+`<div class="field"><label>Conteúdo</label><textarea name="content" rows="5" required></textarea></div>`}
+ if(type==='announcement'){title='Publicar comunicado';fields=field('Título','title','text','',true)+`<div class="field"><label>Mensagem</label><textarea name="message" required rows="4"></textarea></div>`+field('Destinatários','audience','select','<option>Todos os membros</option>'+teams.map(t=>`<option>${t}</option>`).join(''))}
+ $('modalTitle').textContent=title;
+ const form=$('modalForm');form.innerHTML=fields+`<div class="actions"><button type="button" class="btn secondary" id="cancelModal">Cancelar</button><button class="btn">Salvar</button></div>`;
+ $('modalBack').classList.add('show');$('cancelModal').onclick=closeModal;
+ form.onsubmit=e=>{e.preventDefault();const fd=new FormData(form),o=Object.fromEntries(fd.entries());if(type==='member'){o.teams=[...form.elements.teams.selectedOptions].map(x=>x.value);o.passport=o.passport||String(Math.max(1000,...db.members.map(m=>Number(m.passport)||0))+1);o.created=today()}
+ if(type==='goal'||type==='candidate'||type==='attendance'||type==='stock'||type==='finance'||type==='discipline'||type==='announcement'||type==='task'||type==='event'||type==='request'||type==='shift'||type==='evaluation'||type==='document')o.date=today();
+  if(type==='evaluation')o.score=Math.max(0,Math.min(10,Number(o.score)||0));
+ if(type==='stock'||type==='finance')o.quantity=Number(o.quantity||0),o.amount=Number(o.amount||0);
+ const target=type==='member'?'members':type==='goal'?'goals':type==='candidate'?'candidates':type==='task'?'tasks':type==='event'?'events':type==='request'?'requests':type==='shift'?'shifts':type==='evaluation'?'evaluations':type==='document'?'documents':type;db[target].unshift(o);save(target);log('Novo registro',title);closeModal();render()};
+}
+function closeModal(){$('modalBack').classList.remove('show')}
+const tableCollections={membersTable:'members',passportsTable:'members',goalsTable:'goals',recruitTable:'candidates',attendanceTable:'attendance',stockTable:'stock',disciplineTable:'discipline',tasksTable:'tasks',eventsTable:'events',requestsTable:'requests',shiftsTable:'shifts',evaluationsTable:'evaluations'};
+function table(id,data,cols,empty){
+ const collection=tableCollections[id];
+ $(id).innerHTML=data.length?data.map(o=>{
+   const index=db[collection]?.indexOf(o) ?? -1;
+   return '<tr>'+cols.map(c=>`<td>${esc(c(o))}</td>`).join('')+
+   (collection?`<td class="row-actions"><button class="btn secondary small" data-edit="${collection}" data-index="${index}">Editar</button> <button class="btn secondary small danger" data-delete="${collection}" data-index="${index}">Excluir</button></td>`:'')+'</tr>';
+ }).join(''):`<tr><td colspan="${cols.length+(collection?1:0)}" class="empty">${empty}</td></tr>`;
+}
+function render(){
+ const members=db.members,goals=db.goals,candidates=db.candidates;
+ $('openRequestCount').textContent=db.requests.filter(r=>['Aberta','Em análise'].includes(r.status)).length;$('evaluationCount').textContent=db.evaluations.length;
+ $('pendingTaskCount').textContent=db.tasks.filter(t=>t.status!=='Concluída').length;$('upcomingEventCount').textContent=db.events.filter(ev=>{const d=new Date((ev.eventDate||'')+'T23:59:59');return ev.eventDate && d>=new Date(new Date().toDateString())}).length;
+ $('memberCount').textContent=members.length;$('goalCount').textContent=goals.filter(g=>g.date===today()).length;$('candidateCount').textContent=candidates.filter(c=>c.status==='Em análise').length;
+ const recent=members.slice(0,4);$('recentMembers').innerHTML=recent.length?recent.map(m=>`<div class="list-row"><span><b>${esc(m.name)}</b><br><small class="muted">Passaporte ${esc(m.passport)}</small></span><span class="pill">${esc(m.role)}</span></div>`).join(''):'<div class="empty">Nenhum membro cadastrado ainda.</div>';
+ const q=($('memberSearch')?.value||'').toLowerCase();table('membersTable',members.filter(m=>(m.name+' '+m.passport).toLowerCase().includes(q)),[m=>m.passport,m=>m.name,m=>m.role,m=>m.teams?.join(', ')||'Sem equipe',m=>m.status],'Nenhum membro cadastrado.');
+ const pq=($('passportSearch')?.value||'').toLowerCase();table('passportsTable',members.filter(m=>(m.name+' '+m.passport).toLowerCase().includes(pq)),[m=>m.passport,m=>m.name,m=>m.role,m=>m.status],'Nenhum passaporte emitido.');
+ table('goalsTable',goals,[g=>g.date,g=>g.member,g=>g.task,g=>g.result,g=>g.status],'Nenhuma meta lançada.');
+ const tf=$('taskFilter')?.value||'';table('tasksTable',db.tasks.filter(t=>!tf||t.status===tf),[t=>t.title,t=>t.responsible||'—',t=>t.priority,t=>t.dueDate,t=>t.status],'Nenhuma tarefa cadastrada.');
+ table('eventsTable',db.events,[ev=>ev.eventDate,ev=>ev.time||'—',ev=>ev.title,ev=>ev.location||'—',ev=>ev.responsible||'—'],'Nenhum compromisso agendado.');
+ const rf=$('requestFilter')?.value||'';table('requestsTable',db.requests.filter(r=>!rf||r.status===rf),[r=>r.date,r=>r.member,r=>r.kind,r=>r.description,r=>r.status],'Nenhuma solicitação registrada.');
+ table('shiftsTable',db.shifts,[s=>s.shiftDate,s=>s.member,s=>s.start,s=>s.end,s=>s.sector,s=>s.status],'Nenhuma escala cadastrada.');
+ table('evaluationsTable',db.evaluations,[v=>v.date,v=>v.member,v=>v.reviewer,v=>v.score+'/10',v=>v.performance,v=>v.notes||'—'],'Nenhuma avaliação registrada.');
+ $('documentList').innerHTML=db.documents.length?db.documents.map((d,i)=>`<div class="list-row" style="display:block"><div style="display:flex;justify-content:space-between;gap:10px"><div><b>${esc(d.title)}</b><div class="muted">${esc(d.category)} · ${esc(d.date)}</div></div><button class="btn secondary small" data-delete="documents" data-index="${i}">Excluir</button></div><p class="muted" style="white-space:pre-wrap">${esc(d.content)}</p></div>`).join(''):'<div class="empty">Nenhum documento cadastrado.</div>';
+ table('recruitTable',candidates,[c=>c.name,c=>c.contact||'—',c=>c.date,c=>c.status],'Nenhum candidato cadastrado.');
+ table('attendanceTable',db.attendance,[a=>a.date,a=>a.member,a=>a.activity,a=>a.status,a=>a.notes||'—'],'Nenhum registro de presença.');
+ table('stockTable',db.stock,[s=>s.date,s=>s.item,s=>s.movement,s=>s.quantity,s=>s.responsible||'—',s=>s.notes||'—'],'Nenhuma movimentação registrada.');
+ const balances={};db.stock.forEach(s=>{const item=s.item||'Item sem nome';balances[item]=(balances[item]||0)+(s.movement==='Entrada'?Number(s.quantity||0):s.movement==='Saída'?-Number(s.quantity||0):Number(s.quantity||0));});
+ $('stockBalances').innerHTML=Object.keys(balances).length?Object.entries(balances).map(([item,total])=>`<div class="list-row"><span>${esc(item)}</span><b>${total}</b></div>`).join(''):'<div class="empty">Nenhuma movimentação registrada.</div>';
+
+ table('financeTable',db.finance,[f=>f.date,f=>f.kind,f=>f.category,money.bind(null,0) /* replaced below */,f=>f.responsible||'—',f=>f.description||'—'],'Nenhum lançamento financeiro.');
+ // Correctly render currency column without changing stored values.
+ const fin=db.finance;$('financeTable').innerHTML=fin.length?fin.map((f,i)=>`<tr><td>${esc(f.date)}</td><td>${esc(f.kind)}</td><td>${esc(f.category)}</td><td>${money(f.amount)}</td><td>${esc(f.responsible||'—')}</td><td>${esc(f.description||'—')}</td><td><button class="btn secondary small" data-edit="finance" data-index="${i}">Editar</button> <button class="btn secondary small danger" data-delete="finance" data-index="${i}">Excluir</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty">Nenhum lançamento financeiro.</td></tr>';
+ table('disciplineTable',db.discipline,[d=>d.date,d=>d.member,d=>d.kind,d=>d.reason,d=>d.responsible||'—'],'Nenhuma advertência registrada.');
+ const aq=($('auditSearch')?.value||'').toLowerCase();const auditRows=db.audit.filter(a=>(String(a.date)+' '+String(a.action)+' '+String(a.detail)).toLowerCase().includes(aq));$('auditTable').innerHTML=auditRows.length?auditRows.map(a=>`<tr><td>${esc(a.date)}</td><td>${esc(a.action)}</td><td>${esc(a.detail)}</td></tr>`).join(''):'<tr><td colspan="3" class="empty">Nenhuma atividade registrada.</td></tr>';
+ $('announcementList').innerHTML=db.announcements.length?db.announcements.map((a,i)=>`<div class="list-row" style="display:block"><div style="display:flex;justify-content:space-between;gap:10px"><b>${esc(a.title)}</b><button class="btn secondary small" data-delete="announcements" data-index="${i}">Excluir</button></div><p class="muted">${esc(a.message)}</p><small class="muted">${esc(a.date)} · ${esc(a.audience)}</small></div>`).join(''):'<div class="empty">Nenhum comunicado publicado.</div>';
+ $('teamCards').innerHTML=teams.map(t=>`<div class="team"><h3>${t}</h3><p>${members.filter(m=>m.teams?.includes(t)).length} integrante(s) vinculado(s).</p><span class="pill red">Equipe cadastrada</span></div>`).join('');
+ const inc=fin.filter(f=>f.kind==='Entrada').reduce((s,f)=>s+f.amount,0),out=fin.filter(f=>f.kind==='Saída').reduce((s,f)=>s+f.amount,0);
+ $('incomeTotal').textContent=money(inc);$('expenseTotal').textContent=money(out);$('balanceTotal').textContent=money(inc-out);
+ $('activeReport').textContent=members.filter(m=>m.status==='Ativo').length;$('doneReport').textContent=goals.filter(g=>g.status==='Concluída').length;$('attendanceReport').textContent=db.attendance.filter(a=>a.status==='Presente').length;$('approvedReport').textContent=candidates.filter(c=>c.status==='Aprovado').length;
+ $('teamReport').innerHTML=teams.map(t=>`<div class="list-row"><span>${t}</span><b>${members.filter(m=>m.teams?.includes(t)).length} membros</b></div>`).join('');
+}
+$('memberSearch').addEventListener('input',render);$('passportSearch').addEventListener('input',render);$('taskFilter')?.addEventListener('change',render);$('requestFilter')?.addEventListener('change',render);
+function download(name,content,type){const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
+$('exportBtn').onclick=()=>download('tropa-da-polonia-backup.json',JSON.stringify({app:'Tropa da Polônia Central',version:4,exportedAt:new Date().toISOString(),data:db},null,2),'application/json');
+$('importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const raw=JSON.parse(await file.text());const imported=raw.data||raw;keys.forEach(k=>{if(Array.isArray(imported[k])){db[k]=imported[k];save(k)}});render();alert('Backup importado neste navegador.')}catch(err){alert('Não foi possível ler esse backup.')}e.target.value=''};
+$('clearData').onclick=()=>{if(confirm('Tem certeza que deseja apagar todos os registros salvos neste navegador?')){keys.forEach(k=>{db[k]=[];save(k)});render();alert('Dados locais apagados.')}};
+$('reportExport').onclick=()=>{const lines=[['Módulo','Data','Registro','Status/Tipo'],...db.members.map(x=>['Membros',x.created,x.name,x.status]),...db.goals.map(x=>['Metas',x.date,x.member+' - '+x.task,x.status]),...db.attendance.map(x=>['Presença',x.date,x.member+' - '+x.activity,x.status]),...db.requests.map(x=>['Solicitação',x.date,x.member+' - '+x.kind,x.status]),...db.tasks.map(x=>['Tarefa',x.date,x.title,x.status]),...db.shifts.map(x=>['Escala',x.shiftDate,x.member+' '+x.start+'-'+x.end,x.status]),...db.evaluations.map(x=>['Avaliação',x.date,x.member,x.score+'/10'])];download('relatorio-tropa-polonia.csv','\ufeff'+lines.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n'),'text/csv;charset=utf-8')};
+
+// Ações administrativas: edição rápida, exclusão com confirmação e trilha de auditoria.
+document.addEventListener('click',e=>{
+ const del=e.target.closest('[data-delete]');
+ if(del){
+   const key=del.dataset.delete, index=Number(del.dataset.index);
+   if(!Array.isArray(db[key]) || !db[key][index]) return;
+   const label=db[key][index].name||db[key][index].title||db[key][index].item||db[key][index].member||'este registro';
+   if(confirm(`Deseja realmente excluir ${label}?`)){
+     db[key].splice(index,1);save(key);log('Registro excluído',`${key}: ${label}`);render();
+   }
+ }
+ const edit=e.target.closest('[data-edit]');
+ if(edit){
+   const key=edit.dataset.edit,index=Number(edit.dataset.index),obj=db[key]?.[index];
+   if(!obj) return;
+   const updated={...obj};
+   for(const [prop,value] of Object.entries(obj)){
+     if(prop==='id') continue;
+     const current=Array.isArray(value)?value.join(', '):(value??'');
+     const answer=prompt(`Editar ${prop} (deixe como está ou altere):`,String(current));
+     if(answer===null) return;
+     if(Array.isArray(value)) updated[prop]=answer.split(',').map(x=>x.trim()).filter(Boolean);
+     else if(typeof value==='number') updated[prop]=Number(answer)||0;
+     else updated[prop]=answer;
+   }
+   db[key][index]=updated;save(key);log('Registro editado',`${key}: ${updated.name||updated.title||updated.member||'registro'}`);render();
+ }
+});
+$('auditSearch')?.addEventListener('input',render);
+$('taskFilter')?.addEventListener('change',render);$('requestFilter')?.addEventListener('change',render);
+
+$('auditExport')?.addEventListener('click',()=>{
+ const rows=[['Data','Ação','Detalhe'],...db.audit.map(a=>[a.date,a.action,a.detail])];
+ download('historico-tropa-polonia.csv','\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n'),'text/csv;charset=utf-8');
+});
+
+render();
+</script>
+</body></html>
